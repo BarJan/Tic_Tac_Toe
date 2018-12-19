@@ -1,39 +1,54 @@
-#ifndef EXCEPTIONS_HPP
-#define EXCEPTIONS_HPP
+#pragma once
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <exception>
+#include <initializer_list>
 using namespace std;
-#endif
 
 
-
-
+struct Coordinate{
+   
+        uint i,j;
+        
+        inline void operator=(const Coordinate& c){this->i = c.i;this->j=c.j;}
+    /*Coordinate (initializer_list<int> crds){
+   
+    initializer_list<int>::iterator it = crds.begin();
+    this -> i = *it;
+    it++;
+    this -> j = *it;
+  
+    }*/
+};
+/*
 struct pairs
 {
   int i, j;
 };
-
+*/
 
 class IllegalCoordinateException : public exception {
     
     string msg;
-    pairs pair;
+//  Coordinate pair;
+    Coordinate c;
 public:
-
-    IllegalCoordinateException(pairs couple) {
+/*
+    IllegalCoordinateException(Coordinate couple) {
       this -> pair = couple;
   }
-    ~IllegalCoordinateException(){
-        
-    }
+*/ 
+   IllegalCoordinateException(Coordinate couple) {
+      this -> c = couple;
+  }
+  
   
   string theCoordinate() const {
       
      ostringstream msg;
-     msg << this -> pair.i << "," << this -> pair.j << endl;
+     msg << this -> c.i << "," << this -> c.j << endl;
       return  msg.str();
   }
   
@@ -48,16 +63,9 @@ public:
       this -> c = theChar;
     }
   
-   ~IllegalCharException(){
-    }
-  
-  char theChar() const {
+    char theChar() const {
     return this -> c;
   }
   
  };
-
-
-
-
 

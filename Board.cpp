@@ -1,86 +1,113 @@
-#ifndef BOARD_CPP
-#define BOARD_CPP
 #include "Board.h"
-#endif
 
 using namespace std;
 
+
 Board :: Board(int len){
-    this -> length = len;
+    this -> Size = len;
     this -> place = {0,0};
-    board = new X_O*[length];
-    for (int i = 0; i < length; ++i)
-        board[i] = new X_O[length];
+
+    board = new X_O*[Size];
+    for (int i = 0; i < Size; ++i)
+        board[i] = new X_O[Size];
+
+    this -> board = new X_O*[Size];
+    for (int i = 0; i < Size; ++i)
+        this-> board[i] = new X_O[Size];
+
     this->reset(); // maybe not necessary
 }
 
 Board :: Board(const Board& other){
-   this -> length  = other.getLength();
+   this -> Size  = other.size();
    this -> place = {0,0};
     
-    board = new X_O*[length];
-    for (int i = 0; i < length; ++i)
-         board[i] = new X_O[length];
+
+    board = new X_O*[Size];
+    for (int i = 0; i < Size; ++i)
+         board[i] = new X_O[Size];
     this->reset(); // maybe not necessary
+
+    board = new X_O*[Size];
+    for (int i = 0; i < Size; ++i)
+         board[i] = new X_O[Size];
+    for(int i = 0; i < (this-> Size); i++)
+    	 for(int j = 0; j < (this-> Size); j++)
+		(this-> board[i][j]) = other.board[i][j].getChar();
+
     
 }
 
-  /*Board :: ~Board(){
-    for(int i = 0; i < (this-> length); i++){
-		delete [] board[i];
-	}
-	delete [] board;
-}*/
+  Board :: ~Board(){
+    rmv();
+}
 
-/*string Board :: toString()const{
-    string s;
-    for(int i=0; i<length ; i++){
-        for(int j=0; j<length; j++){
-            s += (board[i][j].getChar());
-        }
-        s+='\n';
-    }
-    return s;
-}*/
+void Board :: rmv(){
+    for(int i = 0; i < Size; i++)
+		delete [] board[i];
+	delete [] board; 
+}
+
+
+
+void Board :: reset()
+{
+                for(int i=0; i<this ->size() ; i++){
+                    for(int j=0; j<this ->size(); j++){
+                        board[i][j].setDot();
+                    }
+                }
+            }
 
 Board& Board :: operator=(const Board& other){
-    if(this -> length != other.getLength()){
-        cout << "boards are not the same size!" << endl;
-    }
-    
-    else{
-        for(int i=0; i<this -> length ; i++){
-            for(int j=0; j<this -> length; j++){
-              
-                char c = other.board[i][j].getChar();
-                this -> fill(c,i,j);
-            }
-        }
-        return *this;
-    }
-}
 
+    if(this -> Size != other.size()){
+        cout << "boards are not the same Size!" << endl;
+    }
+    if(this == &other) return *this;
+    rmv();	
+        Size = other.Size;
+        board = new X_O*[Size];
+        for(int i = 0; i < (this-> Size); i++){
+	    board[i] = new X_O[Size];
+    	     for(int j = 0; j < (this-> Size); j++){
+                 if(this == &other) return *this;
+                 rmv();	
+                 this-> Size = other.size();
+                 this-> board = new X_O*[Size];
+    	     }
+        }
+        for(int i = 0; i < (this-> Size); i++){
+	    board[i] = new X_O[Size];
+    	     for(int j = 0; j < (this-> Size); j++){
+
+    	       (this-> board[i][j]) = other.board[i][j];
+    }
+        return *this;
+    
+}
+	return *this;
+}
 char Board :: operator=(char c){
     
     if(c=='.'){
         this -> reset();
     }
-    else {
+    else if (c != 'X' && c!= 'O'){
         throw IllegalCharException(c);
-         return c;
     }
     
     return c;    
 }
 
 
-X_O& Board :: operator[](const pairs pair)
+X_O& Board :: operator[](const Coordinate c)const
 {
-  if((pair.i >= this -> getLength() || pair.j >= this -> getLength()) ||
-     (pair.i < 0 || pair.j <0))
+  if(c.i >= this -> size() || c.j >= this -> size())
      {
-      throw (IllegalCoordinateException(pair));
+      throw (IllegalCoordinateException(c));
    }
   
-    return board[pair.i][pair.j];
+
+    return board[c.i][c.j];
 }
